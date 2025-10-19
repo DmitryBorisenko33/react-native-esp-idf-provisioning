@@ -151,9 +151,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
         }
 
         override fun onFailure(e: Exception?) {
-          if (e != null) {
-            promise?.reject(e)
-          }
+          promise?.reject(e ?: Exception("Unknown error"))
         }
       })
     } else {
@@ -189,9 +187,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
         }
 
         override fun onWiFiScanFailed(e: Exception?) {
-          if (e != null) {
-            promise?.reject(e)
-          }
+          promise?.reject(e ?: Exception("Unknown error"))
         }
       })
     }
@@ -429,9 +425,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
       }
 
       override fun onFailure(e: Exception?) {
-        if (e != null) {
-          promise?.reject(e)
-        }
+        promise?.reject(e ?: Exception("Unknown error"))
       }
     })
   }
@@ -480,9 +474,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
 
     espDevice.provision(ssid, passphrase, object : ProvisionListener {
       override fun createSessionFailed(e: Exception?) {
-        if (e != null) {
-          promise?.reject(e)
-        }
+        promise?.reject(e ?: Exception("Unknown error"))
       }
 
       override fun wifiConfigSent() {
@@ -490,9 +482,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
       }
 
       override fun wifiConfigFailed(e: Exception?) {
-        if (e != null) {
-          promise?.reject(e)
-        }
+        promise?.reject(e ?: Exception("Unknown error"))
       }
 
       override fun wifiConfigApplied() {
@@ -500,9 +490,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
       }
 
       override fun wifiConfigApplyFailed(e: Exception?) {
-        if (e != null) {
-          promise?.reject(e)
-        }
+        promise?.reject(e ?: Exception("Unknown error"))
       }
 
       override fun provisioningFailedFromDevice(failureReason: ESPConstants.ProvisionFailureReason?) {
@@ -516,9 +504,7 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
       }
 
       override fun onProvisioningFailed(e: Exception?) {
-        if (e != null) {
-          promise?.reject(e)
-        }
+        promise?.reject(e ?: Exception("Unknown error"))
       }
     })
   }
