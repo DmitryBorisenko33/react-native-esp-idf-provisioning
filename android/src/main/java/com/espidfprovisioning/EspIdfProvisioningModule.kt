@@ -284,12 +284,24 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
         wifiDevice.wifiName = deviceName
         // For open AP we pass empty string, avoid null which crashes setWpa2Passphrase in SDK
         wifiDevice.password = softAPPassword ?: ""
+        // Force OPEN auth to avoid WPA2 path in SDK when AP is open
+        try {
+          val securityField = WiFiAccessPoint::class.java.getDeclaredField("security")
+          securityField.isAccessible = true
+          securityField.setInt(wifiDevice, 0)
+        } catch (_: Throwable) { }
         espDevice?.wifiDevice = wifiDevice
       } else {
         // If WiFi device originates from scan, password may be null. Force non-null.
         if (espDevice?.wifiDevice?.password == null) {
           espDevice?.wifiDevice?.password = softAPPassword ?: ""
         }
+        // And force OPEN auth even if scan reported otherwise
+        try {
+          val securityField = WiFiAccessPoint::class.java.getDeclaredField("security")
+          securityField.isAccessible = true
+          securityField.setInt(espDevice?.wifiDevice, 0)
+        } catch (_: Throwable) { }
       }
 
       // Apply PoP for SoftAP as well (security1/2)
