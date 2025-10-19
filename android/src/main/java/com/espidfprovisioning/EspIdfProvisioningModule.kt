@@ -278,14 +278,21 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
         return
       }
     } else {
+      // Ensure WiFi access point info is present and password is non-null for SoftAP.
       if (espDevice?.wifiDevice == null) {
         val wifiDevice = WiFiAccessPoint()
         wifiDevice.wifiName = deviceName
+        // For open AP we pass empty string, avoid null which crashes setWpa2Passphrase in SDK
         wifiDevice.password = softAPPassword ?: ""
         espDevice?.wifiDevice = wifiDevice
       } else {
-        // Ensure password is never null in SoftAP path to avoid NPE in WifiNetworkSpecifier#setWpa2Passphrase
-        espDevice.wifiDevice?.password = softAPPassword ?: ""
+        // If WiFi device originates from scan, password may be null. Force non-null.
+        if (espDevice?.wifiDevice?.password == null) {
+          espDevice?.wifiDevice?.password = softAPPassword ?: ""
+        } else {
+          // Always overwrite with provided password to ensure correctness
+          espDevice?.wifiDevice?.password = softAPPassword ?: ""
+        }
       }
 
       // Apply PoP and optional username for SoftAP as well
