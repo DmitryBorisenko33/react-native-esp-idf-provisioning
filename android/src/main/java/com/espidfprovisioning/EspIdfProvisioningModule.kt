@@ -281,9 +281,17 @@ class EspIdfProvisioningModule internal constructor(context: ReactApplicationCon
       if (espDevice?.wifiDevice == null) {
         val wifiDevice = WiFiAccessPoint()
         wifiDevice.wifiName = deviceName
-        wifiDevice.password = softAPPassword
-
+        wifiDevice.password = softAPPassword ?: ""
         espDevice?.wifiDevice = wifiDevice
+      } else {
+        // Ensure password is never null in SoftAP path to avoid NPE in WifiNetworkSpecifier#setWpa2Passphrase
+        espDevice.wifiDevice?.password = softAPPassword ?: ""
+      }
+
+      // Apply PoP and optional username for SoftAP as well
+      espDevice?.proofOfPossession = proofOfPossession
+      if (username != null) {
+        espDevice?.userName = username
       }
 
       val result = Arguments.createMap()
